@@ -32,5 +32,21 @@ module.exports = {
         )
       )
     })
+  },
+  deleteFriend: (id) => {
+    return new Promise((resolve, reject) => {
+      console.log(
+        connection.query(
+          `DELETE FROM friend WHERE friend_id = ${id}`,
+          (error, result) => {
+            if (!error) {
+              resolve(result)
+            } else {
+              reject(error)
+            }
+          }
+        )
+      )
+    })
   }
 }

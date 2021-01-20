@@ -1,6 +1,10 @@
 const helper = require('../helper/response')
 
-const { addFriend, confirmFriend } = require('../model/friendModel')
+const {
+  addFriend,
+  confirmFriend,
+  deleteFriend
+} = require('../model/friendModel')
 
 module.exports = {
   addFriend: async (req, res) => {
@@ -25,6 +29,16 @@ module.exports = {
 
       const result = await confirmFriend(friendId)
       return helper.response(res, 200, 'Now you are friend', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  deleteFriend: async (req, res) => {
+    try {
+      const { friendId } = req.body
+
+      const result = await deleteFriend(friendId)
+      return helper.response(res, 200, 'You are now not a friend', result)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
