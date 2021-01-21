@@ -44,20 +44,6 @@ module.exports = {
       })
     })
   },
-  confirmFriend: (id) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `UPDATE friend SET friend_status = 1 WHERE friend_id = ${id}`,
-        (error, result) => {
-          if (!error) {
-            resolve(result)
-          } else {
-            reject(error)
-          }
-        }
-      )
-    })
-  },
   deleteFriend: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
