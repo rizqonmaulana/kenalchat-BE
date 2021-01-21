@@ -6,7 +6,7 @@ module.exports = {
       connection.query('INSERT INTO user SET ?', setData, (error, result) => {
         if (!error) {
           const newResult = {
-            user_id: result.insertedId,
+            user_id: result.insertId,
             ...setData
           }
           delete newResult.user_password
@@ -16,6 +16,20 @@ module.exports = {
           reject(new Error(error))
         }
       })
+    })
+  },
+  activateUser: (id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE user SET user_status = 1 WHERE user_id = ${id}`,
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
     })
   },
   getUser: (email) => {
@@ -82,7 +96,7 @@ module.exports = {
   checkEmail: (email) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}'`,
+        `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}' WHERE user_status = 1`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

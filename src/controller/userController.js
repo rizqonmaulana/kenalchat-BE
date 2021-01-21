@@ -1,13 +1,15 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const helper = require('../helper/response')
+const nodemailer = require('nodemailer')
 
 const {
   registerUser,
   checkEmail,
   updateUser,
   updatePassword,
-  getUser
+  getUser,
+  activateUser
 } = require('../model/userModel')
 
 module.exports = {
@@ -40,6 +42,7 @@ module.exports = {
         user_name: userName,
         user_email: userEmail,
         user_password: encryptPassword,
+        user_status: 0,
         user_created_at: new Date()
       }
 
@@ -47,7 +50,54 @@ module.exports = {
 
       const result = await registerUser(setData)
 
-      return helper.response(res, 200, 'Success register user', result)
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: process.env.MAIL_NAME, // generated ethereal user
+          pass: process.env.MAIL_PASS // generated ethereal password
+        }
+      })
+      const mailOptions = {
+        from: '"Kenal Chat App" <kenalchatapp@gmail.com', // sender address
+        to: userEmail, // list of receivers
+        subject: 'kenal chat app - Activate your account', // Subject line
+        html: `
+        <p>Hello ${userName} please activate your account by click the link bellow</p>
+        <a href=" http://localhost:3000/user/active/${result.user_id}">Click here activate your account</a>`
+      }
+      await transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error)
+          return helper.response(res, 400, 'Email not send !')
+        } else {
+          console.log(info)
+          return helper.response(res, 200, 'Email has been send !')
+        }
+      })
+
+      return helper.response(
+        res,
+        200,
+        'Success register user, please check your email to activate your account',
+        result
+      )
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  activateUser: async (req, res) => {
+    try {
+      const { id } = req.params
+
+      const result = await activateUser(id)
+      return helper.response(
+        res,
+        200,
+        'your account is already active, please login first',
+        result
+      )
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
