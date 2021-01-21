@@ -25,15 +25,20 @@ module.exports = {
   },
   getRoomByUser: async (req, res) => {
     try {
-      const { userId } = req.body
+      const { id } = req.params
 
-      const result = await getRoomByUser(userId)
-      return helper.response(
-        res,
-        200,
-        `Success get room by user id ${userId}`,
-        result
-      )
+      const result = await getRoomByUser(id)
+
+      if (result.length > 0) {
+        return helper.response(
+          res,
+          200,
+          `Success get room by user id ${id}`,
+          result
+        )
+      } else {
+        return helper.response(res, 400, 'not found')
+      }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }

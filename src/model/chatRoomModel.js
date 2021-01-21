@@ -27,5 +27,19 @@ module.exports = {
         }
       )
     })
+  },
+  getRoomByUser: (userId) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM chat_room WHERE user_1 = ${userId} ORDER BY room_updated_at ASC`,
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(error)
+          }
+        }
+      )
+    })
   }
 }
