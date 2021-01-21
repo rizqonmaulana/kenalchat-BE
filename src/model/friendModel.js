@@ -1,24 +1,10 @@
 const connection = require('../config/mysql')
 
 module.exports = {
-  getFriendFrom: (id) => {
+  getFriend: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT user_id_to AS user_id, user.user_name, user.user_pic FROM friend JOIN user ON friend.user_id_to = user.user_id WHERE user_id_from = ${id} AND friend_status = 1`,
-        (error, result) => {
-          if (!error) {
-            resolve(result)
-          } else {
-            reject(new Error(error))
-          }
-        }
-      )
-    })
-  },
-  getFriendTo: (id) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT user_id_from AS user_id, user.user_name, user.user_pic FROM friend JOIN user ON friend.user_id_from = user.user_id WHERE user_id_to = ${id} AND friend_status = 1`,
+        `SELECT friend.user_friend_id, user.user_name, user.user_email, user.user_pic FROM friend JOIN user ON friend.user_friend_id = user.user_id WHERE friend.user_id = ${id}`,
         (error, result) => {
           if (!error) {
             resolve(result)
