@@ -1,9 +1,43 @@
 const helper = require('../helper/response')
 
-const { postChat } = require('../model/chatModel')
-const { createRoom, checkRoom } = require('../model/chatRoomModel')
+const { postChat, getChatByRoom } = require('../model/chatModel')
+const {
+  createRoom,
+  checkRoom,
+  getRoomByUser
+} = require('../model/chatRoomModel')
 
 module.exports = {
+  getChatByRoom: async (req, res) => {
+    try {
+      const { roomId } = req.body
+
+      const result = await getChatByRoom(roomId)
+      return helper.response(
+        res,
+        200,
+        `Success get chat by room id ${roomId}`,
+        result
+      )
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  getRoomByUser: async (req, res) => {
+    try {
+      const { userId } = req.body
+
+      const result = await getRoomByUser(userId)
+      return helper.response(
+        res,
+        200,
+        `Success get room by user id ${userId}`,
+        result
+      )
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
   postChat: async (req, res) => {
     try {
       const { userIdFrom, userIdTo, chatContent } = req.body
