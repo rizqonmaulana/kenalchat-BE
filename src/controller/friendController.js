@@ -2,9 +2,8 @@ const helper = require('../helper/response')
 
 const {
   getFriend,
-  checkFriendRequest,
+  checkFriend,
   addFriend,
-  confirmFriend,
   deleteFriend
 } = require('../model/friendModel')
 
@@ -31,51 +30,23 @@ module.exports = {
         user_friend_id: friendId
       }
 
-      const result = await addFriend(setData)
       let friend = await getUserById(friendId)
       friend = friend[0].user_name
+
+      const check = await checkFriend(setData)
+
+      if (check.length > 0) {
+        return helper.response(res, 200, `You already friends with ${friend}`)
+      }
+
+      const result = await addFriend(setData)
+
       return helper.response(
         res,
         200,
         `${friend} added to your friend list`,
         result
       )
-    } catch (error) {
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
-  checkFriendRequest: async (req, res) => {
-    try {
-      const { userIdFrom, userIdTo } = req.body
-
-      const data = {
-        userIdFrom,
-        userIdTo
-      }
-
-      let status = 1
-      const check1 = await checkFriendRequest(data, status)
-      if (check1.length > 0) {
-        return helper.response(res, 200, 'friend')
-      }
-
-      status = 0
-      const check0 = await checkFriendRequest(data, status)
-      if (check0.length > 0) {
-        return helper.response(res, 200, 'friend requested')
-      } else {
-        return helper.response(res, 200, 'add friend')
-      }
-    } catch (error) {
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
-  confirmFriend: async (req, res) => {
-    try {
-      const { friendId } = req.body
-
-      const result = await confirmFriend(friendId)
-      return helper.response(res, 200, 'Now you are friend', result)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }

@@ -15,10 +15,10 @@ module.exports = {
       )
     })
   },
-  checkFriendRequest: (data, status) => {
+  checkFriend: (data) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM friend WHERE user_id_from = ${data.userIdFrom} AND user_id_to = ${data.userIdTo} AND friend_status = ${status}`,
+        `SELECT * FROM friend WHERE user_id = ${data.user_id} AND user_friend_id = ${data.user_friend_id}`,
         (error, result) => {
           if (!error) {
             resolve(result)
