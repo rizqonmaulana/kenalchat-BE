@@ -9,6 +9,8 @@ const {
   deleteFriend
 } = require('../model/friendModel')
 
+const { getUserById } = require('../model/userModel')
+
 module.exports = {
   getFriendList: async (req, res) => {
     try {
@@ -27,16 +29,22 @@ module.exports = {
   },
   addFriend: async (req, res) => {
     try {
-      const { userFrom, userTo } = req.body
+      const { userId, friendId } = req.body
 
       const setData = {
-        user_id_from: userFrom,
-        user_id_to: userTo,
-        friend_status: 0
+        user_id: userId,
+        user_friend_id: friendId
       }
 
       const result = await addFriend(setData)
-      return helper.response(res, 200, 'Friend request sent', result)
+      let friend = await getUserById(friendId)
+      friend = friend[0].user_name
+      return helper.response(
+        res,
+        200,
+        `${friend} added to your friend list`,
+        result
+      )
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
