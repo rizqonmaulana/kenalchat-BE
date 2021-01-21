@@ -1,12 +1,30 @@
 const helper = require('../helper/response')
 
 const {
+  getFriendFrom,
+  getFriendTo,
   addFriend,
   confirmFriend,
   deleteFriend
 } = require('../model/friendModel')
 
 module.exports = {
+  getFriendList: async (req, res) => {
+    try {
+      const { userId } = req.body
+      console.log(userId)
+
+      const data1 = await getFriendFrom(userId)
+      const data2 = await getFriendTo(userId)
+
+      const result = data1.concat(data2)
+
+      console.log(result)
+      //   return helper.response(res, 200, 'Get friend list', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
   addFriend: async (req, res) => {
     try {
       const { userFrom, userTo } = req.body
