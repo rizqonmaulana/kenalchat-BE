@@ -4,7 +4,7 @@ module.exports = {
   getFriend: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT friend.user_friend_id, user.user_name, user.user_email, user.user_pic FROM friend JOIN user ON friend.user_friend_id = user.user_id WHERE friend.user_id = ${id}`,
+        `SELECT friend.friend_id, friend.user_friend_id, user.user_name, user.user_email, user.user_pic FROM friend JOIN user ON friend.user_friend_id = user.user_id WHERE friend.user_id = ${id}`,
         (error, result) => {
           if (!error) {
             resolve(result)
