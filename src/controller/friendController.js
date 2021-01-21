@@ -3,6 +3,7 @@ const helper = require('../helper/response')
 const {
   getFriendFrom,
   getFriendTo,
+  checkFriendRequest,
   addFriend,
   confirmFriend,
   deleteFriend
@@ -37,6 +38,32 @@ module.exports = {
 
       const result = await addFriend(setData)
       return helper.response(res, 200, 'Friend request sent', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  checkFriendRequest: async (req, res) => {
+    try {
+      const { userIdFrom, userIdTo } = req.body
+
+      const data = {
+        userIdFrom,
+        userIdTo
+      }
+
+      let status = 1
+      const check1 = await checkFriendRequest(data, status)
+      if (check1.length > 0) {
+        return helper.response(res, 200, 'friend')
+      }
+
+      status = 0
+      const check0 = await checkFriendRequest(data, status)
+      if (check0.length > 0) {
+        return helper.response(res, 200, 'friend requested')
+      } else {
+        return helper.response(res, 200, 'add friend')
+      }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }

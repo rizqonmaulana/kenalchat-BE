@@ -3,11 +3,13 @@ const router = require('express').Router()
 const {
   getFriendList,
   addFriend,
+  checkFriendRequest,
   confirmFriend,
   deleteFriend
 } = require('../controller/friendController')
 
 router.get('/all', getFriendList)
+router.get('/check', checkFriendRequest)
 router.post('/add', addFriend)
 router.patch('/confirm', confirmFriend)
 router.delete('/delete', deleteFriend)

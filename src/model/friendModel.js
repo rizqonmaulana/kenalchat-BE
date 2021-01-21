@@ -29,6 +29,20 @@ module.exports = {
       )
     })
   },
+  checkFriendRequest: (data, status) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM friend WHERE user_id_from = ${data.userIdFrom} AND user_id_to = ${data.userIdTo} AND friend_status = ${status}`,
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
+  },
   addFriend: (setData) => {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO friend SET ?', setData, (error, result) => {
