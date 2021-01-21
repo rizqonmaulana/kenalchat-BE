@@ -20,8 +20,7 @@ module.exports = {
 
       const result = data1.concat(data2)
 
-      console.log(result)
-      //   return helper.response(res, 200, 'Get friend list', result)
+      return helper.response(res, 200, 'Get friend list', result)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
