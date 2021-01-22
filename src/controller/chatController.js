@@ -1,6 +1,10 @@
 const helper = require('../helper/response')
 
-const { postChat, getChatByRoom } = require('../model/chatModel')
+const {
+  postChat,
+  getChatByRoom,
+  chatReadStatus
+} = require('../model/chatModel')
 const {
   createRoom,
   checkRoom,
@@ -10,9 +14,13 @@ const {
 module.exports = {
   getChatByRoom: async (req, res) => {
     try {
-      const { roomId } = req.body
+      const { roomId, userId } = req.body
+      console.log(roomId)
 
       const result = await getChatByRoom(roomId)
+
+      await chatReadStatus(roomId, userId)
+
       return helper.response(
         res,
         200,
@@ -56,14 +64,16 @@ module.exports = {
         let roomData = {
           room_id: getRoom,
           user_1: userIdFrom,
-          user_2: userIdTo
+          user_2: userIdTo,
+          room_updated_at: new Date()
         }
         await createRoom(roomData)
 
         roomData = {
           room_id: getRoom,
           user_1: userIdTo,
-          user_2: userIdFrom
+          user_2: userIdFrom,
+          room_updated_at: new Date()
         }
         await createRoom(roomData)
       } else {
@@ -74,10 +84,12 @@ module.exports = {
         room_id: getRoom,
         user_id_from: userIdFrom,
         user_id_to: userIdTo,
-        chat_content: chatContent
+        chat_content: chatContent,
+        chat_status: 0
       }
 
       const result = await postChat(setData)
+      await chatReadStatus(getRoom, userIdFrom)
 
       return helper.response(res, 200, 'Success post chat', result)
     } catch (error) {

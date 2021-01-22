@@ -27,5 +27,19 @@ module.exports = {
         }
       )
     })
+  },
+  chatReadStatus: (roomId, userId) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE chat SET chat_status = 1 WHERE room_id = ${roomId} AND user_id_from != ${userId}`,
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
   }
 }

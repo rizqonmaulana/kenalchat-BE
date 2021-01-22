@@ -6,8 +6,8 @@ const {
   getRoomByUser
 } = require('../controller/chatController')
 
-router.get('/:id', getRoomByUser)
 router.get('/get', getChatByRoom)
+router.get('/:id', getRoomByUser)
 router.post('/post', postChat)
 
 module.exports = router
