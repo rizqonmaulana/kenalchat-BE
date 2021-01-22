@@ -8,7 +8,8 @@ const {
 const {
   createRoom,
   checkRoom,
-  getRoomByUser
+  getRoomByUser,
+  updateRoom
 } = require('../model/chatRoomModel')
 
 module.exports = {
@@ -17,9 +18,9 @@ module.exports = {
       const { roomId, userId } = req.body
       console.log(roomId)
 
-      const result = await getChatByRoom(roomId)
-
       await chatReadStatus(roomId, userId)
+
+      const result = await getChatByRoom(roomId)
 
       return helper.response(
         res,
@@ -88,8 +89,10 @@ module.exports = {
         chat_status: 0
       }
 
-      const result = await postChat(setData)
       await chatReadStatus(getRoom, userIdFrom)
+      const result = await postChat(setData)
+
+      await updateRoom(getRoom)
 
       return helper.response(res, 200, 'Success post chat', result)
     } catch (error) {

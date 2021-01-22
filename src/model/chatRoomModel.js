@@ -42,7 +42,7 @@ module.exports = {
       )
     })
   },
-  chatReadStatus: (roomId) => {
+  updateRoom: (roomId) => {
     return new Promise((resolve, reject) => {
       connection.query(
         `UPDATE chat_room SET room_updated_at = current_timestamp() WHERE room_id = ${roomId}`,
