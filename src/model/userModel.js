@@ -96,10 +96,23 @@ module.exports = {
   checkEmail: (email) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}' WHERE user_status = 1`,
+        `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}'`,
         (error, result) => {
+          console.log(error)
           !error ? resolve(result) : reject(new Error(error))
         }
+      )
+    })
+  },
+  checkEmailActive: (email) => {
+    return new Promise((resolve, reject) => {
+      console.log(
+        connection.query(
+          `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}' AND user_status = 1`,
+          (error, result) => {
+            !error ? resolve(result) : reject(new Error(error))
+          }
+        )
       )
     })
   }

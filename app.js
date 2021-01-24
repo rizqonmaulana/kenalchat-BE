@@ -3,6 +3,8 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const routesNavigation = require('./src/routesNavigation')
 const cors = require('cors')
+const socket = require('socket.io')
+
 require('dotenv').config()
 
 const port = process.env.PORT
@@ -21,12 +23,63 @@ app.use((request, response, next) => {
   next()
 })
 
+const http = require('http')
+const server = http.createServer(app)
+const io = socket(server, {
+  cors: {
+    origin: '*'
+  }
+})
+io.on('connection', (socket) => {
+  console.log('Socket.io Connect !')
+  // global Message = pesan yang di kirimkan ke semua client
+  // private Message = pesan yang hanya dikirimkan ke client saja
+  // broadcast Message = pesan yang di kirimkan ke semua client kecuali si pengirim
+  // room = ruangan pesan yang bisa di akses/ dimasuki client
+  socket.on('globalMessage', (data) => {
+    console.log(data)
+    io.emit('chatMessage', data)
+  })
+  socket.on('privateMessage', (data) => {
+    socket.emit('chatMessage', data)
+  })
+  socket.on('broadcastMessage', (data) => {
+    socket.broadcast.emit('chatMessage', data)
+  })
+  socket.on('joinRoom', (data) => {
+    console.log(data)
+    socket.join(data.room)
+    socket.broadcast.to(data.room).emit('chatMessage', {
+      username: 'BOT',
+      message: `${data.username} Joined Chat !`
+    })
+  })
+  // =
+  socket.on('changeRoom', (data) => {
+    console.log(data)
+    socket.leave(data.oldRoom)
+    socket.join(data.room)
+    socket.broadcast.to(data.room).emit('chatMessage', {
+      username: 'BOT',
+      message: `${data.username} Joined Chat !`
+    })
+  })
+  // =
+  socket.on('roomMessage', (data) => {
+    io.to(data.room).emit('chatMessage', data)
+  })
+  socket.on('typing', (data) => {
+    console.log(data)
+    socket.broadcast.to(data.room).emit('typingMessage', data)
+  })
+})
+
 app.use('/', routesNavigation)
 
 app.get('*', (req, res) => {
   res.status(404).send('Not found please check again !')
 })
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Kenal app listening at http://localhost:${port}`)
 })

@@ -7,7 +7,7 @@ const {
   deleteFriend
 } = require('../model/friendModel')
 
-const { getUserById } = require('../model/userModel')
+const { getUserById, checkEmailActive } = require('../model/userModel')
 
 module.exports = {
   getFriendList: async (req, res) => {
@@ -23,7 +23,14 @@ module.exports = {
   },
   addFriend: async (req, res) => {
     try {
-      const { userId, friendId } = req.body
+      const { userId, friendEmail } = req.body
+
+      const checkEmail = await checkEmailActive(friendEmail)
+      if (checkEmail.length === 0) {
+        return helper.response(res, 400, 'user not found')
+      }
+
+      const friendId = checkEmail[0].user_id
 
       const setData = {
         user_id: userId,

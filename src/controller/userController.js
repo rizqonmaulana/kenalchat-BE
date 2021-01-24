@@ -31,7 +31,7 @@ module.exports = {
         return helper.response(
           res,
           400,
-          'Duplicate Email, email has been used by another account'
+          'Duplicate Email, email has been used by another account or have registered but not active, please check your email to activate your account'
         )
       }
 
