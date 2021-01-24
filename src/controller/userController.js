@@ -2,14 +2,15 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const helper = require('../helper/response')
 const nodemailer = require('nodemailer')
+const fs = require('fs')
 
 const {
   registerUser,
   checkEmail,
-  updateUser,
   updatePassword,
   getUser,
-  activateUser
+  activateUser,
+  patchUser
 } = require('../model/userModel')
 
 module.exports = {
@@ -169,6 +170,48 @@ module.exports = {
       return helper.response(res, 200, 'Success update password', result)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  patchUser: async (request, response) => {
+    try {
+      const { userEmail, userName, userPhone, userBio } = request.body
+
+      let newPic
+      const user = await checkEmail(userEmail)
+
+      if (request.file === undefined) {
+        newPic = user[0].user_pic
+      } else {
+        if (user[0].user_pic === null) {
+          newPic = request.file.filename
+        } else {
+          newPic = request.file.filename
+          fs.unlink(`./uploads/user/${user[0].user_pic}`, function (err) {
+            if (err) throw err
+            console.log('File deleted!')
+          })
+        }
+      }
+
+      const setData = {
+        user_name: userName,
+        user_pic: newPic,
+        user_phone: userPhone,
+        user_bio: userBio,
+        user_updated_at: new Date()
+      }
+
+      const result = await patchUser(setData, userEmail)
+
+      return helper.response(
+        response,
+        200,
+
+        'Success update your profile ',
+        result
+      )
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
     }
   }
 }

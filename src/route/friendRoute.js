@@ -6,7 +6,7 @@ const {
   deleteFriend
 } = require('../controller/friendController')
 
-router.get('/all', getFriendList)
+router.post('/all', getFriendList)
 router.post('/add', addFriend)
 router.delete('/delete', deleteFriend)
 
