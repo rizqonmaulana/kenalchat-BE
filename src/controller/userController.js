@@ -47,8 +47,6 @@ module.exports = {
         user_created_at: new Date()
       }
 
-      console.log(setData)
-
       const result = await registerUser(setData)
 
       const transporter = nodemailer.createTransport({
@@ -70,10 +68,8 @@ module.exports = {
       }
       await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-          console.log(error)
           return helper.response(res, 400, 'Email not send !')
         } else {
-          console.log(info)
           return helper.response(res, 200, 'Email has been send !')
         }
       })
@@ -108,6 +104,8 @@ module.exports = {
       const { userEmail, userPassword } = req.body
 
       const check = await checkEmail(userEmail)
+      console.log(check)
+      console.log('ini check')
 
       if (check.length > 0) {
         const passwordCheck = bcrypt.compareSync(
@@ -129,7 +127,7 @@ module.exports = {
           }
 
           const token = jwt.sign(payload, 'PASSWORD', { expiresIn: '24h' })
-          const result = { ...payload, token }
+          const result = { payload, token }
           return helper.response(res, 200, 'Login success', result)
         } else {
           return helper.response(res, 400, 'wrong password')
@@ -163,8 +161,6 @@ module.exports = {
         user_password: encryptPassword
       }
 
-      console.log(setData)
-
       const result = await updatePassword(setData)
 
       return helper.response(res, 200, 'Success update password', result)
@@ -175,10 +171,12 @@ module.exports = {
   patchUser: async (request, response) => {
     try {
       const { userEmail, userName, userPhone, userBio } = request.body
-
+      console.log(request.body)
       let newPic
+      console.log('sebelum cek email')
       const user = await checkEmail(userEmail)
 
+      console.log('sebelum if req.file')
       if (request.file === undefined) {
         newPic = user[0].user_pic
       } else {
@@ -193,6 +191,7 @@ module.exports = {
         }
       }
 
+      console.log('sebelum set data')
       const setData = {
         user_name: userName,
         user_pic: newPic,
@@ -201,8 +200,10 @@ module.exports = {
         user_updated_at: new Date()
       }
 
+      console.log('sebelum result')
       const result = await patchUser(setData, userEmail)
 
+      console.log('setelah result')
       return helper.response(
         response,
         200,
@@ -212,6 +213,16 @@ module.exports = {
       )
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getUserByEmail: async (req, res) => {
+    try {
+      const { email } = req.params
+
+      const result = await checkEmail(email)
+      return helper.response(res, 200, 'success get data', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
     }
   }
 }

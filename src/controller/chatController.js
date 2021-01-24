@@ -3,7 +3,9 @@ const helper = require('../helper/response')
 const {
   postChat,
   getChatByRoom,
-  chatReadStatus
+  chatReadStatus,
+  countUnreadMsg,
+  getLastChat
 } = require('../model/chatModel')
 const {
   createRoom,
@@ -37,16 +39,24 @@ module.exports = {
       const { id } = req.params
 
       const result = await getRoomByUser(id)
-
       if (result.length > 0) {
-        return helper.response(
-          res,
-          200,
-          `Success get room by user id ${id}`,
-          result
-        )
-      } else {
-        return helper.response(res, 400, 'not found')
+        for (let i = 0; i < result.length; i++) {
+          result[i].unreadmessage = await countUnreadMsg(
+            result[i].room_id,
+            result[i].user_1
+          )
+          result[i].lastChat = await getLastChat(result[i].room_id)
+        }
+        if (result.length > 0) {
+          return helper.response(
+            res,
+            200,
+            `Success get room by user id ${id}`,
+            result
+          )
+        } else {
+          return helper.response(res, 400, 'not found')
+        }
       }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)

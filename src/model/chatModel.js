@@ -41,5 +41,29 @@ module.exports = {
         }
       )
     })
+  },
+  countUnreadMsg: (idRoom, id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'select COUNT(*) AS total from chat where room_id = ? && user_id_from != ? && chat_status = 0',
+        [idRoom, id],
+        (error, result) => {
+          console.log(error)
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getLastChat: (roomId) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'select chat_content, room_id, user_id_from, user_id_to, chat_created_at from chat where room_id = ? order by chat_created_at DESC',
+        roomId,
+        (error, result) => {
+          console.log(error)
+          !error ? resolve(result[0]) : reject(new Error(error))
+        }
+      )
+    })
   }
 }

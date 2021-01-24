@@ -84,10 +84,8 @@ module.exports = {
           [setData, email],
           (error, result) => {
             if (!error) {
-              console.log(result)
               resolve(setData)
             } else {
-              console.log(error)
               reject(new Error(error))
             }
           }
