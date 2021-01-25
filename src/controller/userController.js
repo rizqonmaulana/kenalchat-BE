@@ -127,7 +127,7 @@ module.exports = {
           }
 
           const token = jwt.sign(payload, 'PASSWORD', { expiresIn: '24h' })
-          const result = { payload, token }
+          const result = { ...payload, token }
           return helper.response(res, 200, 'Login success', result)
         } else {
           return helper.response(res, 400, 'wrong password')
