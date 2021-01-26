@@ -64,7 +64,7 @@ module.exports = {
         subject: 'kenal chat app - Activate your account', // Subject line
         html: `
         <p>Hello ${userName} please activate your account by click the link bellow</p>
-        <a href=" http://localhost:3000/user/active/${result.user_id}">Click here activate your account</a>`
+        <a href=" http://localhost:8080/active/${result.user_id}">Click here activate your account</a>`
       }
       await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
@@ -104,8 +104,6 @@ module.exports = {
       const { userEmail, userPassword } = req.body
 
       const check = await checkEmail(userEmail)
-      console.log(check)
-      console.log('ini check')
 
       if (check.length > 0) {
         const passwordCheck = bcrypt.compareSync(
@@ -170,13 +168,17 @@ module.exports = {
   },
   patchUser: async (request, response) => {
     try {
-      const { userEmail, userName, userPhone, userBio } = request.body
-      console.log(request.body)
+      const {
+        userEmail,
+        userName,
+        userPhone,
+        userBio,
+        userLat,
+        userLng
+      } = request.body
       let newPic
-      console.log('sebelum cek email')
       const user = await checkEmail(userEmail)
 
-      console.log('sebelum if req.file')
       if (request.file === undefined) {
         newPic = user[0].user_pic
       } else {
@@ -191,19 +193,24 @@ module.exports = {
         }
       }
 
-      console.log('sebelum set data')
-      const setData = {
-        user_name: userName,
-        user_pic: newPic,
-        user_phone: userPhone,
-        user_bio: userBio,
-        user_updated_at: new Date()
+      let setData
+      if (userLat && userLng) {
+        setData = {
+          user_lat: userLat,
+          user_lng: userLng
+        }
+      } else {
+        setData = {
+          user_name: userName,
+          user_pic: newPic,
+          user_phone: userPhone,
+          user_bio: userBio,
+          user_updated_at: new Date()
+        }
       }
 
-      console.log('sebelum result')
       const result = await patchUser(setData, userEmail)
 
-      console.log('setelah result')
       return helper.response(
         response,
         200,

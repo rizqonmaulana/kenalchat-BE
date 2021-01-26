@@ -13,8 +13,6 @@ module.exports = {
   getFriendList: async (req, res) => {
     try {
       const { userId } = req.body
-      console.log(req.body)
-      console.log('ini user id')
 
       const result = await getFriend(userId)
 

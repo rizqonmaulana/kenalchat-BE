@@ -5,10 +5,8 @@ module.exports = {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO chat SET ?', data, (error, result) => {
         if (!error) {
-          console.log(result)
           resolve(result)
         } else {
-          console.log(error)
           reject(new Error(error))
         }
       })
@@ -17,7 +15,7 @@ module.exports = {
   getChatByRoom: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM chat WHERE room_id = ${id} ORDER BY chat_created_at ASC`,
+        `SELECT chat.* , user.user_id, user.user_name, user.user_pic, user.user_email, user.user_phone, user.user_bio FROM chat JOIN user ON chat.user_id_from = user.user_id WHERE room_id = ${id} ORDER BY chat_created_at ASC`,
         (error, result) => {
           if (!error) {
             resolve(result)

@@ -18,7 +18,6 @@ module.exports = {
   getChatByRoom: async (req, res) => {
     try {
       const { roomId, userId } = req.body
-      console.log(roomId)
 
       await chatReadStatus(roomId, userId)
 
