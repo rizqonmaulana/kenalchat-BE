@@ -1,6 +1,6 @@
 <h1 align="center">ExpressJS - Kenal chat web app</h1>
 
-#background_projek. [More about Express](https://en.wikipedia.org/wiki/Express.js)
+Kenal is a realtime web app chat. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
