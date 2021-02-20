@@ -60,9 +60,9 @@ module.exports = {
   },
   deleteFriend: async (req, res) => {
     try {
-      const { friendId } = req.body
+      const { userId, friendId } = req.body
 
-      const result = await deleteFriend(friendId)
+      const result = await deleteFriend(userId, friendId)
       return helper.response(res, 200, 'You are now not a friend', result)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)

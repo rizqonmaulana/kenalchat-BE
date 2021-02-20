@@ -45,10 +45,10 @@ module.exports = {
       })
     })
   },
-  deleteFriend: (id) => {
+  deleteFriend: (userId, friendId) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `DELETE FROM friend WHERE friend_id = ${id}`,
+        `DELETE FROM friend WHERE user_id = ${userId} AND user_friend_id = ${friendId}`,
         (error, result) => {
           if (!error) {
             resolve(result)
