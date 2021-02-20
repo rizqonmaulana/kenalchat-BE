@@ -8,6 +8,6 @@ const {
 
 router.post('/all', getFriendList)
 router.post('/add', addFriend)
-router.delete('/delete', deleteFriend)
+router.post('/delete', deleteFriend)
 
 module.exports = router

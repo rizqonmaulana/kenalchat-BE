@@ -63,15 +63,38 @@ module.exports = {
   },
   postChat: async (req, res) => {
     try {
-      const { userIdFrom, userIdTo, chatContent } = req.body
+      const { userIdFrom, userIdTo, chatContent, roomId } = req.body
+
+      const setData = {
+        room_id: roomId,
+        user_id_from: userIdFrom,
+        user_id_to: userIdTo,
+        chat_content: chatContent,
+        chat_status: 0
+      }
+
+      await chatReadStatus(roomId, userIdFrom)
+      const result = await postChat(setData)
+
+      await updateRoom(roomId)
+
+      return helper.response(res, 200, 'Success post chat', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  createRoom: async (req, res) => {
+    try {
+      const { userIdFrom, userIdTo } = req.body
 
       const check = await checkRoom(userIdFrom, userIdTo)
 
+      let roomData
       let getRoom
       if (check.length === 0) {
         getRoom = Math.floor(Math.random() * Math.floor(999999999))
 
-        let roomData = {
+        roomData = {
           room_id: getRoom,
           user_1: userIdFrom,
           user_2: userIdTo,
@@ -79,31 +102,18 @@ module.exports = {
         }
         await createRoom(roomData)
 
-        roomData = {
+        const roomData2 = {
           room_id: getRoom,
           user_1: userIdTo,
           user_2: userIdFrom,
           room_updated_at: new Date()
         }
-        await createRoom(roomData)
+        await createRoom(roomData2)
       } else {
-        getRoom = check[0].room_id
+        roomData = check[0]
       }
 
-      const setData = {
-        room_id: getRoom,
-        user_id_from: userIdFrom,
-        user_id_to: userIdTo,
-        chat_content: chatContent,
-        chat_status: 0
-      }
-
-      await chatReadStatus(getRoom, userIdFrom)
-      const result = await postChat(setData)
-
-      await updateRoom(getRoom)
-
-      return helper.response(res, 200, 'Success post chat', result)
+      return helper.response(res, 200, 'Success create / get room', roomData)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
