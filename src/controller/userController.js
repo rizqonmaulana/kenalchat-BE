@@ -38,11 +38,15 @@ module.exports = {
       const salt = bcrypt.genSaltSync(10)
       const encryptPassword = bcrypt.hashSync(userPassword, salt)
 
+      const crypto = require('crypto')
+      const key = crypto.randomBytes(20).toString('hex')
+
       const setData = {
         user_name: userName,
         user_email: userEmail,
         user_password: encryptPassword,
         user_status: 0,
+        user_key: key,
         user_created_at: new Date()
       }
 
@@ -63,7 +67,7 @@ module.exports = {
         subject: 'kenal chat app - Activate your account', // Subject line
         html: `
         <p>Hello ${userName} please activate your account by click the link bellow</p>
-        <a href=" http://localhost:8080/active/${result.user_id}">Click here activate your account</a>`
+        <a href=" http://localhost:8080/active/${key}">Click here activate your account</a>`
       }
       await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
@@ -85,9 +89,9 @@ module.exports = {
   },
   activateUser: async (req, res) => {
     try {
-      const { id } = req.params
-
-      const result = await activateUser(id)
+      const { key } = req.params
+      console.log(key)
+      const result = await activateUser(key)
       return helper.response(
         res,
         200,
@@ -95,6 +99,7 @@ module.exports = {
         result
       )
     } catch (error) {
+      console.log(error)
       return helper.response(res, 400, 'Bad Request', error)
     }
   },

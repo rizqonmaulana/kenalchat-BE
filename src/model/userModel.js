@@ -18,10 +18,10 @@ module.exports = {
       })
     })
   },
-  activateUser: (id) => {
+  activateUser: (key) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `UPDATE user SET user_status = 1 WHERE user_id = ${id}`,
+        `UPDATE user SET user_status = 1 WHERE user_key = '${key}'`,
         (error, result) => {
           if (!error) {
             resolve(result)
