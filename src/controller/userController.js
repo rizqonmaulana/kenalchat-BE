@@ -8,7 +8,6 @@ const {
   registerUser,
   checkEmail,
   updatePassword,
-  getUser,
   activateUser,
   patchUser
 } = require('../model/userModel')

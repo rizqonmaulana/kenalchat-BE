@@ -34,7 +34,6 @@ module.exports = {
         `SELECT * FROM chat_room JOIN user ON chat_room.user_2 = user.user_id WHERE user_1 = ${userId} ORDER BY room_updated_at DESC`,
         (error, result) => {
           if (!error) {
-            console.log(result)
             resolve(result)
           } else {
             console.log(error)

@@ -75,6 +75,7 @@ module.exports = {
 
       await chatReadStatus(roomId, userIdFrom)
       const result = await postChat(setData)
+      console.log(result)
 
       await updateRoom(roomId)
 

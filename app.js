@@ -59,12 +59,14 @@ io.on('connection', (socket) => {
   })
   // =
   socket.on('roomMessage', (data) => {
+    console.log('ini data room ms')
     console.log(data)
     io.to(data.room_id).emit('chatMessage', data)
   })
   socket.on('typing', (data) => {
+    console.log('ini data typing ')
     console.log(data)
-    socket.broadcast.to(data.room_id).emit('typingMessage', data)
+    socket.broadcast.to(data.room).emit('typingMessage', data)
   })
 })
 
