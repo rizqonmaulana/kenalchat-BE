@@ -11,7 +11,7 @@ const port = process.env.PORT
 
 const app = express()
 app.use(morgan('dev'))
-app.use(express.static('uploads'))
+app.use('/apikenal/fileupload', express.static('uploads'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
@@ -29,7 +29,8 @@ const server = http.createServer(app)
 const io = socket(server, {
   cors: {
     origin: '*'
-  }
+  },
+  path: '/apikenal/socket.io'
 })
 io.on('connection', (socket) => {
   console.log('Socket.io Connect !')
@@ -64,13 +65,11 @@ io.on('connection', (socket) => {
     io.to(data.room_id).emit('chatMessage', data)
   })
   socket.on('typing', (data) => {
-    console.log('ini data typing ')
-    console.log(data)
     socket.broadcast.to(data.room).emit('typingMessage', data)
   })
 })
 
-app.use('/', routesNavigation)
+app.use('/apikenal', routesNavigation)
 
 app.get('*', (req, res) => {
   res.status(404).send('Not found please check again !')
