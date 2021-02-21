@@ -1,6 +1,12 @@
 <h1 align="center">ExpressJS - Kenal chat web app</h1>
 
-Kenal is a realtime web app chat. [More about Express](https://en.wikipedia.org/wiki/Express.js)
+<p align="center">
+    <a href="https://github.com/rizqonmaulana/kenalchat-BE/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/rizqonmaulana/kenalchat-BE/issues">Request Feature</a>
+  </p>
+
+Kenal is a web-based realtime chat application, with Kenal we can make friends with other people and chat with them. kenal built with Express JS, Vue JS and MySQL [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
@@ -36,6 +42,7 @@ DB_USER=root
 DB_PASS=
 DB_TIMEZONE=UTC
 PORT=3000
+URL=https://kenal.netlify.app
 MAIL_NAME= please use your email
 MAIL_PASS= please use your email password
 
