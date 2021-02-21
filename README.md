@@ -6,7 +6,7 @@
     <a href="https://github.com/rizqonmaulana/kenalchat-BE/issues">Request Feature</a>
   </p>
 
-Kenal is a web-based realtime chat application, with Kenal we can make friends with other people and chat with them. kenal built with Express JS, Vue JS and MySQL [More about Express](https://en.wikipedia.org/wiki/Express.js)
+Kenal is a web-based realtime chat application, with Kenal we can make friends with other people and chat with them. kenal built with Express JS, Vue JS and MySQL. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
