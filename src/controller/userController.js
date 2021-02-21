@@ -67,7 +67,7 @@ module.exports = {
         subject: 'kenal chat app - Activate your account', // Subject line
         html: `
         <p>Hello ${userName} please activate your account by click the link bellow</p>
-        <a href=" http://localhost:8080/active/${key}">Click here activate your account</a>`
+        <a href=" ${process.env.URL}/active/${key}">Click here activate your account</a>`
       }
       await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
