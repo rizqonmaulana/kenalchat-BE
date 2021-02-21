@@ -1,4 +1,4 @@
-<h1 align="center">ExpressJS - Kenal chat web app</h1>
+<h1 align="center">ExpressJS - Kenal (web-based realtime chat application)</h1>
 
 <p align="center">
     <a href="https://github.com/rizqonmaulana/kenalchat-BE/issues">Report Bug</a>
