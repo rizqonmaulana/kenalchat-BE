@@ -21,7 +21,7 @@ module.exports = {
   activateUser: (key) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `UPDATE user SET user_status = 1 WHERE user_key = '${key}'`,
+        `UPDATE user SET user_status = 1, user_key = NULL WHERE user_key = '${key}'`,
         (error, result) => {
           if (!error) {
             resolve(result)
@@ -78,18 +78,16 @@ module.exports = {
   },
   patchUser: (setData, email) => {
     return new Promise((resolve, reject) => {
-      console.log(
-        connection.query(
-          'UPDATE user SET ? WHERE user_email = ?',
-          [setData, email],
-          (error, result) => {
-            if (!error) {
-              resolve(setData)
-            } else {
-              reject(new Error(error))
-            }
+      connection.query(
+        'UPDATE user SET ? WHERE user_email = ?',
+        [setData, email],
+        (error, result) => {
+          if (!error) {
+            resolve(setData)
+          } else {
+            reject(new Error(error))
           }
-        )
+        }
       )
     })
   },
@@ -106,13 +104,39 @@ module.exports = {
   },
   checkEmailActive: (email) => {
     return new Promise((resolve, reject) => {
-      console.log(
-        connection.query(
-          `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}' AND user_status = 1`,
-          (error, result) => {
-            !error ? resolve(result) : reject(new Error(error))
+      connection.query(
+        `SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = '${email}' AND user_status = 1`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  forgotPassword: (data) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE user SET user_key = '${data.key}' WHERE user_email = '${data.email}'`,
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
           }
-        )
+        }
+      )
+    })
+  },
+  resetPassword: (data) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE user SET user_password = '${data.password}', user_key = NULL WHERE user_key = '${data.userKey}'`,
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
       )
     })
   }

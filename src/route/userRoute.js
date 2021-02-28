@@ -6,7 +6,9 @@ const {
   loginUser,
   patchPassword,
   patchUser,
-  getUserByEmail
+  getUserByEmail,
+  forgotPassword,
+  resetPassword
 } = require('../controller/userController')
 const uploadImage = require('../middleware/multer')
 
@@ -16,5 +18,7 @@ router.post('/login', loginUser)
 router.patch('/change/password', patchPassword)
 router.patch('/change/profile', uploadImage, patchUser)
 router.get('/:email', getUserByEmail)
+router.patch('/forgot', forgotPassword)
+router.patch('/reset', resetPassword)
 
 module.exports = router

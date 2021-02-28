@@ -65,7 +65,11 @@ io.on('connection', (socket) => {
     io.to(data.room_id).emit('chatMessage', data)
   })
   socket.on('typing', (data) => {
+    console.log(data)
     socket.broadcast.to(data.room).emit('typingMessage', data)
+  })
+  socket.on('leaveRoom', (data) => {
+    socket.leave(data.room)
   })
 })
 

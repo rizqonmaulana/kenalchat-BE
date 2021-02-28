@@ -7,9 +7,12 @@ const fs = require('fs')
 const {
   registerUser,
   checkEmail,
+  checkEmailActive,
   updatePassword,
   activateUser,
-  patchUser
+  patchUser,
+  forgotPassword,
+  resetPassword
 } = require('../model/userModel')
 
 module.exports = {
@@ -50,8 +53,6 @@ module.exports = {
         user_created_at: new Date()
       }
 
-      const result = await registerUser(setData)
-
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
@@ -69,20 +70,25 @@ module.exports = {
         <p>Hello ${userName} please activate your account by click the link bellow</p>
         <a href=" ${process.env.URL}/active/${key}">Click here activate your account</a>`
       }
+
       await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-          return helper.response(res, 400, 'Email not send !')
+          return helper.response(
+            res,
+            403,
+            'Failed to send email, make sure your email is correct.'
+          )
         } else {
-          return helper.response(res, 200, 'Email has been send !')
+          const result = registerUser(setData)
+
+          return helper.response(
+            res,
+            200,
+            'Success register user, please check your email to activate your account',
+            result
+          )
         }
       })
-
-      return helper.response(
-        res,
-        200,
-        'Success register user, please check your email to activate your account',
-        result
-      )
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
@@ -107,7 +113,7 @@ module.exports = {
     try {
       const { userEmail, userPassword } = req.body
 
-      const check = await checkEmail(userEmail)
+      const check = await checkEmailActive(userEmail)
 
       if (check.length > 0) {
         const passwordCheck = bcrypt.compareSync(
@@ -135,7 +141,11 @@ module.exports = {
           return helper.response(res, 400, 'wrong password')
         }
       } else {
-        return helper.response(res, 400, 'Bad Request')
+        return helper.response(
+          res,
+          403,
+          "User not found, please register first, if you have register but can't login, please check your email to activate your account"
+        )
       }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
@@ -232,6 +242,80 @@ module.exports = {
 
       const result = await checkEmail(email)
       return helper.response(res, 200, 'success get data', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  forgotPassword: async (req, res) => {
+    try {
+      const { email } = req.body
+
+      const crypto = require('crypto')
+      const key = crypto.randomBytes(20).toString('hex')
+
+      const data = {
+        email,
+        key
+      }
+
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: process.env.MAIL_NAME, // generated ethereal user
+          pass: process.env.MAIL_PASS // generated ethereal password
+        }
+      })
+      const mailOptions = {
+        from: '"Kenal Chat App" <kenalchatapp@gmail.com', // sender address
+        to: email, // list of receivers
+        subject: 'kenal chat app - Reset Password', // Subject line
+        html: `
+        <p>Hello ${email} please reset your password by click the link bellow</p>
+        <a href=" ${process.env.URL}/reset/${key}">Click here to reset your password</a>`
+      }
+
+      await transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          return helper.response(
+            res,
+            403,
+            'Failed to send email, make sure your email is correct.'
+          )
+        } else {
+          const result = forgotPassword(data)
+
+          return helper.response(
+            res,
+            200,
+            'Please check your email to reset your password',
+            result
+          )
+        }
+      })
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  resetPassword: async (req, res) => {
+    try {
+      const { userKey, password, confirmPassword } = req.body
+
+      if (password !== confirmPassword) {
+        return helper.response(res, 403, 'Password not match')
+      }
+
+      const salt = bcrypt.genSaltSync(10)
+      const encryptPassword = bcrypt.hashSync(password, salt)
+
+      const data = {
+        userKey,
+        password: encryptPassword
+      }
+
+      const result = await resetPassword(data)
+      return helper.response(res, 200, 'success reset password', result)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
