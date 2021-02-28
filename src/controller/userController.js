@@ -53,42 +53,43 @@ module.exports = {
         user_created_at: new Date()
       }
 
-      const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-          user: process.env.MAIL_NAME, // generated ethereal user
-          pass: process.env.MAIL_PASS // generated ethereal password
+      const result = await registerUser(setData)
+
+      if (result) {
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false, // true for 465, false for other ports
+          auth: {
+            user: 'kostkost169@gmail.com', // generated ethereal user
+            pass: 'admin@123456' // generated ethereal password
+          }
+        })
+        const mailOptions = {
+          from: '"startup coffee" <startup coffee@gmail.com', // sender address
+          to: userEmail, // list of receivers
+          subject: 'startup coffee - Activate account', // Subject line
+          html: `<p>To Account  </p>
+          <p>Click link bellow to activate your account</p>
+          <a href="${process.env.URL}/active/${key}">Activate my account</a>`
         }
-      })
-      const mailOptions = {
-        from: '"Kenal Chat App" <kenalchatapp@gmail.com', // sender address
-        to: userEmail, // list of receivers
-        subject: 'kenal chat app - Activate your account', // Subject line
-        html: `
-        <p>Hello ${userName} please activate your account by click the link bellow</p>
-        <a href=" ${process.env.URL}/active/${key}">Click here activate your account</a>`
+        await transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error)
+            return helper.response(res, 400, 'Email not send !')
+          } else {
+            console.log(info)
+            return helper.response(res, 200, 'Email has been send !')
+          }
+        })
       }
 
-      await transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          return helper.response(
-            res,
-            403,
-            'Failed to send email, make sure your email is correct.'
-          )
-        } else {
-          const result = registerUser(setData)
-
-          return helper.response(
-            res,
-            200,
-            'Success register user, please check your email to activate your account',
-            result
-          )
-        }
-      })
+      return helper.response(
+        res,
+        200,
+        'Success Register User, please check your email to activate your account',
+        result
+      )
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
