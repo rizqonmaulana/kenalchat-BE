@@ -264,8 +264,8 @@ module.exports = {
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {
-          user: process.env.MAIL_NAME, // generated ethereal user
-          pass: process.env.MAIL_PASS // generated ethereal password
+          user: 'kostkost169@gmail.com', // generated ethereal user
+          pass: 'admin@123456' // generated ethereal password
         }
       })
       const mailOptions = {
