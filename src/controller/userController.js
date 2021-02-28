@@ -16,23 +16,23 @@ const {
 } = require('../model/userModel')
 
 module.exports = {
-  registerUser: async (req, res) => {
+  registerUser: async (request, response) => {
     try {
       const {
         userName,
         userEmail,
         userPassword,
         userConfirmPassword
-      } = req.body
+      } = request.body
 
       if (userPassword !== userConfirmPassword) {
-        return helper.response(res, 400, 'Password not match')
+        return helper.response(response, 400, 'Password not match')
       }
 
       const check = await checkEmail(userEmail)
       if (check.length > 0) {
         return helper.response(
-          res,
+          response,
           400,
           'Duplicate Email, email has been used by another account or have registered but not active, please check your email to activate your account'
         )
@@ -76,22 +76,22 @@ module.exports = {
         await transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
             console.log(error)
-            return helper.response(res, 400, 'Email not send !')
+            return helper.response(response, 400, 'Email not send !')
           } else {
             console.log(info)
-            return helper.response(res, 200, 'Email has been send !')
+            return helper.response(response, 200, 'Email has been send !')
           }
         })
       }
 
       return helper.response(
-        res,
+        response,
         200,
         'Success Register User, please check your email to activate your account',
         result
       )
     } catch (error) {
-      return helper.response(res, 400, 'Bad Request', error)
+      return helper.response(response, 400, 'Bad Request', error)
     }
   },
   activateUser: async (req, res) => {
