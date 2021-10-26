@@ -22,7 +22,7 @@ Kenal is a web-based realtime chat application, with Kenal we can make friends w
 
 ## How to run the app ?
 
-1. Open app's directory in CMD or Terminal
+1. Open app's directory in CMD or Terminal 
 2. Type `npm install`
 3. Make new file a called **.env**, set up first [here](#set-up-env-file)
 4. Turn on Web Server and MySQL can using Third-party tool like xampp, etc.
